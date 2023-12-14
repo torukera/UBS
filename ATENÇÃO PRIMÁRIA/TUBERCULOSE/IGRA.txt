@@ -1,0 +1,11 @@
+ Os testes IGRA (Interferon Gamma Release Assay) - ensaios de detecção de interferon gama em amostras de sangue
+
+O princípio do teste é a medida dos níveis in vitro do interferon gama produzido por células T que tenham sido estimuladas por antígenos de TB purificados ou sintetizados.(3,4)
+
+Técnica utilizada para o teste de IGRA
+
+O teste de interferon-gama (Interferon Gama Release Assay - IGRA) possui duas técnicas comercializadss internacionalmente: o QuantiFERON-TB Gold In-Tube (QTF) e T-SPOT. Ambos são aprovados pelo FDA (US Food and Drug Administration), Health Canada e CE (Comitê Europeu), porém apenas o QTF possui registro no Brasil.
+
+O sangue é coletado diretamente em três tubos separados: o tubo de controle negativo contendo apenas heparina, o tubo de controle positivo contendo fitohemaglutinina como mitógeno e um terceiro tubo contendo peptídeos específicos para M. tuberculosis ESAT-6, CFP-10 e TB7.7. Os tubos são incubados a 37°C durante 18 horas e centrifugados para se obterem amostras de plasma, as quais são armazenadas a -20°C até o teste ELISA ser realizado.
+
+O QFT é portanto um teste de respostas imunitárias mediadas por células (CMI) a peptídeos antigênicos que simulam proteínas micobacterianas. Estas proteínas, ESAT-6, CFP-10, e TB7.7, estão ausentes em todas as estirpes de BCG e na maioria das micobactérias não tuberculosas, com a exceção de M. kansasii, M. szulgai, e M. marinum. Normalmente, os indivíduos infectados com organismos do complexo M. tuberculosis possuem linfócitos no sangue que reconhecem estes e outros antigênicos micobacterianos. Este processo de reconhecimento envolve a produção e secreção da citosina IFN-?. A detecção por ensaio imunoenzimático (ELISA) do IFN- é utilizada para identificar respostas imunes celulares in vitro associadas à infecção por M. tuberculosis: um indivíduo é considerado portador de infecção por M. tuberculosis quando a concentração de IFN-, mensurada em UI/mL, é superior ao cutoff do teste.(7)
