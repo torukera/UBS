@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)https://api.saude.pr.gov.br/governo-digital/farmacia/consulta -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Required meta tags -->
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="./consulta_files/bootstrap.min.css">
+
+    <link rel="stylesheet" href="./consulta_files/fontawesome.min.css">
+
+    <link rel="stylesheet" href="./consulta_files/governo-digital.css">
+
+    <link rel="stylesheet" href="./consulta_files/font-awesome.min.css">
+
+        <style>
+        .text-bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+        <div class="row">
+        <div class="col-sm-12">
+            <form onsubmit="return false;">
+                <div class="box box-success">
+                    <div class="box-header with-border text-success"><h3>Consulta de Medicamentos</h3></div>
+                    <div class="box-body">
+                        <h5 class="text-secondary">Consulte aqui se o seu medicamento é disponibilizado pela
+                            Secretaria de Estado da Saúde do Paraná (SESA/PR)</h5>
+                        <div class="box-group" id="accordion">
+                            <div class="panel box">
+                                <div class="box-header">
+                                    <a href="https://api.saude.pr.gov.br/governo-digital/farmacia/consulta#detalhes-medicamentos" data-toggle="collapse" data-parent="#accordion">
+                                        <b><i class="fa fa-retweet"></i>Descrição detalhada</b>
+                                    </a>
+                                </div>
+                                <div class="panel-collapse collapse" id="detalhes-medicamentos">
+                                    Aqui você poderá consultar os medicamentos disponibilizados pela SESA/PR, para qual CID (código da
+                                    doença), em qual protocolo clínico ele está padronizado, além de verificar a relação de documentos e
+                                    exames necessários para dar entrada na solicitação.<br><br>
+                                    <b>Obs1.:</b>&nbsp;A documentação deve ser entregue na farmácia do seu município ou na farmácia da Regional de
+                                    Saúde.<br>
+                                    <b>Obs2.:</b> Após apresentar a documentação na farmácia, a solicitação será avaliada com base nos critérios
+                                    definidos nos Protocolos Clínicos e Diretrizes Terapêuticas do Ministério da Saúde. A avaliação será feita
+                                    em até 60 dias. Em caso de deferimento, o paciente passará a receber o medicamento.
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <label>
+                            <input type="radio" name="tipo-busca" value="medicamento"> Medicamento
+                        </label>
+                        <label>
+                            <input type="radio" name="tipo-busca" value="protocolo"> Protocolo Clínico
+                        </label>
+                        <label>
+                            <input type="radio" name="tipo-busca" value="cid"> CID
+                        </label>
+                        <div class="row">
+                            <div class="col-sm-12 div-tipo-busca" id="div-medicamento">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        Nome Genérico do Medicamento:
+                                        <i class="fa fa-info-circle text-info" data-toggle="tooltip" data-placement="top" title="" data-original-title="No mínimo 4 caracteres"></i>
+                                    </label>
+                                    <input class="form-control" name="medicamento" placeholder="Ex.: atorvastatina">
+                                </div>
+                            </div>
+                            <div class="col-sm-12 div-tipo-busca d-none" id="div-protocolo">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        Protocolo Clínico:
+                                        <i class="fa fa-info-circle text-info" data-toggle="tooltip" data-placement="top" title="" data-original-title="No mínimo 4 caracteres"></i>
+                                    </label>
+                                    <input class="form-control" name="protocolo" placeholder="Ex.: hepatite">
+                                </div>
+                            </div>
+                            <div class="col-sm-12 div-tipo-busca d-none" id="div-cid">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        CID:
+                                        <i class="fa fa-info-circle text-info" data-toggle="tooltip" data-placement="top" title="" data-original-title="Classificação internacional da doença"></i>
+                                    </label>
+                                    <input class="form-control" name="cid" placeholder="Ex.: B182">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer with-border">
+                        <button id="btn-consultar" class="btn btn-success">Consultar</button>
+                        <button id="btn-reset" class="btn btn-light">Limpar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="loading" class="col-sm-12 text-center p-5" style="display: none;">
+            <i class="fa fa-2x fa-spin fa-spinner"></i> Aguarde, carregando dados...
+        </div>
+        <div class="col-sm-12 table-responsive" id="result" style="display: none;">
+            <hr>
+            <table class="table table-bordered table-striped table-hover table-sm text-center">
+                <thead>
+                <tr>
+                    <th>Medicamento</th>
+                    <th>Protocolo Clínico</th>
+                    <th>CID</th>
+                    <th>Documentos</th>
+                </tr>
+                </thead>
+                <tbody id="bodyMedicamentos"></tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="modal-medicamentos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Documentos Necessários</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label class="control-label"><b>CID:</b></label>
+                                <p class="text-muted" id="cid"></p>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="control-label"><b>Descrição:</b></label>
+                                <p class="text-muted" id="descricao"></p>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="control-label"><b>Medicamento:</b></label>
+                                <p class="text-muted" id="medicamento"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="control-label"><b>Procolo Clínico</b></label>
+                                <p class="text-muted" id="protocolo"></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="control-label"><b>Tipo de solicitação</b></label>
+                                <p class="row text-muted">
+                                    <label class="col-md-4">
+                                        <input type="radio" name="tipo_solicitacao" value="nova" onchange="printDocumentos()" checked="">Solicitação
+                                        Inicial
+                                    </label>
+                                    <label class="col-md-4">
+                                        <input type="radio" name="tipo_solicitacao" value="adequacao" onchange="printDocumentos()">Adequação de
+                                        Solicitação
+                                    </label>
+                                    <label class="col-md-4">
+                                        <input type="radio" name="tipo_solicitacao" value="renovacao" onchange="printDocumentos()">Renovação de
+                                        Solicitação
+                                    </label>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="control-label">
+                                    <b>Documentos gerais necessários:</b>
+                                </label>
+                                <ul id="listaDocumentosGerais" class="text-muted"></ul>
+                                <label class="control-label">
+                                    <b>
+                                        Documentos necessários para o medicamento
+                                        <span id="nome_medicamento"></span>:
+                                    </b>
+                                </label>
+                                <ul id="listaDocumentos" class="text-muted"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="imprimir" class="btn btn-primary"><i class="fa fa-print"></i> Imprimir
+                        </button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal"><i class="fa fa-times"></i>
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./consulta_files/jquery-3.4.1.min.js.download"></script>
+<script src="./consulta_files/popper.min.js.download"></script>
+<script src="./consulta_files/bootstrap.min.js.download"></script>
+
+    <script src="./consulta_files/lodash.min.js.download" integrity="sha256-VeNaFBVDhoX3H+gJ37DpT/nTuZTdjYro9yBruHjVmoQ=" crossorigin="anonymous"></script>
+    <script>
+        var medicamentos = undefined;
+        var medicamentoSelecionado = undefined;
+        var documentosGerais = undefined;
+
+        $(document).ready(function () {
+            $("#result").hide();
+            $("#loading").hide();
+            getDocumentosGerais();
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('#btn-consultar').click(function () {
+                var data = {
+                    medicamento: $("input[name=medicamento]").val(),
+                    cid: $("input[name=cid]").val(),
+                    pcdt: $("input[name=protocolo]").val()
+                }
+
+                $("#result").hide();
+                $("#bodyMedicamentos").html("");
+
+                if (data.medicamento.length > 0 || data.cid.length > 0 || data.pcdt.length > 0) {
+                    $("#loading").show();
+                    $.ajax({
+                        timeout: 15000,
+                        method: "GET",
+                        url: "https://api.saude.pr.gov.br/api/v1/cmde/documentos",
+                        headers: {
+                            Authorization: 'Bearer b358aa26f4c02c7ebf15c31b52922948'
+                        },
+                        data: data
+                    }).done(function (data) {
+                        if (data.length > 0) {
+                            $("#result").show();
+                            medicamentos = data;
+                            var procedimentos = _.groupBy(medicamentos, (row) => row.medicamento + row.pcdt);
+                            $("#bodyMedicamentos").html("");
+                            _.forEach(procedimentos, (procedimento) => {
+                                var firstRow = _.head(procedimento)
+                                rowMedicamento(firstRow.medicamento, firstRow.pcdt, _.map(procedimento, 'cid'));
+                            })
+                            $("#loading").hide();
+                        }
+                    }).fail(function (e) {
+                        text = "Nenhum medicamento encontrado.";
+                        if (e.statusText === "timeout") {
+                            text = "O tempo de carregamento expirou, refine melhor a sua busca."
+                        }
+                        $("#result").show();
+                        $("#bodyMedicamentos").append(
+                            $("<tr/>")
+                                .append(
+                                    $("<td/>")
+                                        .attr('colspan', 4)
+                                        .text(text))
+                        )
+                        $("#loading").hide();
+                    })
+                } else {
+                    alert('É obrigatório informar ao menos um filtro para pesquisa.')
+                }
+            });
+
+            $("#btn-reset").click(function () {
+                $("input:radio[name=tipo-busca][value=medicamento]").click();
+                clearTextFields()
+            });
+
+            $('input[name="tipo-busca"]').on("change", function () {
+                clearTextFields()
+                $('.div-tipo-busca').addClass("d-none");
+                $("#div-" + $(this).val()).removeClass("d-none");
+                $("input[name=" + $(this).val() + "]").val("")
+            }).first().click();
+
+            $("#imprimir").click(function () {
+                
+                window.open('https://api.saude.pr.gov.br/governo-digital/farmacia/consulta/imprimir?medicamento=' + medicamentoSelecionado.medicamento + '&pcdt=' + medicamentoSelecionado.pcdt + '&tipo_solicitacao=' + $("input[name='tipo_solicitacao']:checked").val() + '&cid=' + medicamentoSelecionado.cid);
+            })
+        });
+
+        function getDocumentosGerais() {
+            $.ajax({
+                timeout: 15000,
+                method: "GET",
+                url: "https://api.saude.pr.gov.br/api/v1/cmde/documentos-gerais",
+                headers: {
+                    Authorization: 'Bearer b358aa26f4c02c7ebf15c31b52922948'
+                }
+            }).done(function (data) {
+                documentosGerais = data
+            });
+        }
+
+        function clearTextFields() {
+            $("input[name=medicamento]").val("");
+            $("input[name=cid]").val("");
+            $("input[name=protocolo]").val("");
+        }
+
+        function rowMedicamento(medicamento, protocolo, cids) {
+            var select = $("<select/>")
+                .addClass('form-control')
+                .attr('name', 'cid[' + _.snakeCase(medicamento.trim() + protocolo.trim()) + ']');
+
+            _.forEach(cids, (cid) => {
+                select = select.append($("<option/>").text(cid))
+            })
+
+            var search = $("<a/>")
+                .attr('data-toggle', 'modal')
+                .attr('data-target', '#modal-medicamentos')
+                .attr('href', '#')
+                .attr('onclick', 'openMedicamento("' + _.snakeCase(medicamento.trim() + protocolo.trim()) + '")')
+                .append(
+                    $("<i/>").addClass(['fa', 'fa-search'])
+                );
+            $("#bodyMedicamentos")
+                .append(
+                    $("<tr/>")
+                        .append($("<td/>").text(medicamento))
+                        .append($("<td/>").text(protocolo))
+                        .append(select)
+                        .append($("<td/>").append(search))
+                );
+        }
+
+        function openMedicamento(chave) {
+            // console.log('medicamentos: ' + JSON.stringify(medicamentos))
+            var cid = $("select[name=cid\\[" + chave + "\\]]").val();
+            var medicamento = _.find(medicamentos, (row) => _.snakeCase(row.medicamento.trim() + row.pcdt.trim()) === chave && row.cid.trim() === cid.trim());
+            // console.log('medicamento: ' +  JSON.stringify(medicamento))
+            medicamentoSelecionado = medicamento
+            $('#cid').text(cid);
+            $('#descricao').text(medicamento.desc_cid);
+            $('#medicamento').text(medicamento.medicamento)
+            $('#nome_medicamento').text(medicamento.medicamento)
+            $('#protocolo').text(medicamento.pcdt)
+
+            printDocumentos();
+        }
+
+        function printDocumentos(){
+            printDocumentosGerais();
+            printDocumentosMedicamento();
+        }
+
+        function printDocumentosGerais(){
+            $('#listaDocumentosGerais').html("")
+            documentosGerais.forEach(function (documento) {
+                link = ""
+                if (documento.link_modelo) {
+                    link = $("<a/>")
+                        .attr('href', documento.link_modelo)
+                        .attr('target', '_blank')
+                        .append('(Baixar arquivo modelo ')
+                        .append(
+                            $("<i/>").addClass('fa fa-download')
+                        )
+                        .append(')')
+                }
+                var tipoSolicitacao = $("input[name='tipo_solicitacao']:checked").val();
+                if (
+                    tipoSolicitacao === 'nova' || //se tipoSolicitacao for nova entra sempre
+                    (
+                        tipoSolicitacao !== 'nova' &&  //se tipoSolicitacao for diferente de nova E
+                        (documento.codigo === 51 || documento.codigo === 20) //o documento for igual a 51 OU 20 entra
+                    )
+                ) {
+                    $('#listaDocumentosGerais').append(
+                        $("<li/>")
+                            .append(documento.nome)
+                            .append(link)
+                    )
+                }
+            });
+        }
+
+        function printDocumentosMedicamento() {
+            $('#listaDocumentos').html("")
+            var tipo_solicitacao = $("input[name='tipo_solicitacao']:checked").val();
+            _.forEach(medicamentoSelecionado.documentos, (documento) => {
+                // console.log('Documento: ' + JSON.stringify(documento))
+                if (documento[tipo_solicitacao]) {
+                    link = ""
+                    if (documento.link_documento) {
+                        link = $("<a/>")
+                            .attr('href', documento.link_documento)
+                            .attr('target', '_blank')
+                            .append('(Baixar arquivo modelo ')
+                            .append(
+                                $("<i/>").addClass('fa fa-download')
+                            )
+                            .append(')')
+                    }
+
+                    $('#listaDocumentos').append(
+                        $("<li/>")
+                            .append(documento.documento)
+                            .append(documento.validade_exame === 0 ? '' : ' (' + documento.validade_exame + ' meses)')
+                            .append(link)
+                    )
+                }
+            });
+        }
+    </script>
+
+
+
+</body></html>
